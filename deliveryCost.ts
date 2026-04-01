@@ -1,6 +1,7 @@
 type PackageSize = "small" | "large";
 type Workload = "very high" | "high" | "increased" | "normal";
 type DeliveryOption = "insurance" | "express" | "weekend";
+type DeliverySlot = [number, number]; // [startHour, endHour]
 
 const sizeCost: Record<PackageSize, number> = {
   small: 100,
@@ -26,6 +27,7 @@ function calculateDeliveryCost(
   fragile: boolean,
   workload: Workload,
   options: DeliveryOption[] = [],
+  slot?: DeliverySlot,
 ): number {
   const minCost = 400;
   let cost = 0;
@@ -58,12 +60,24 @@ function calculateDeliveryCost(
 
   cost += options.reduce((sum, option) => sum + deliveryOptionsCost[option], 0);
 
+  if (slot) {
+    const [start, end] = slot;
+
+    if (start >= 22 || end <= 8) {
+      throw new Error("Delivery not allowed between 22:00 and 08:00");
+    }
+
+    if (start >= 18 && end <= 22) {
+      cost += 120;
+    }
+  }
+
   return Math.max(cost, minCost);
 }
 
 console.log(
   calculateDeliveryCost(5, "small", false, "normal", ["express", "insurance"]),
 );
-console.log(calculateDeliveryCost(1, "large", true, "high"));
+console.log(calculateDeliveryCost(2, "small", false, "normal", [], [23, 1]));
 console.log(calculateDeliveryCost(25, "small", true, "very high"));
 console.log(calculateDeliveryCost(0, "small", true, "high"));
