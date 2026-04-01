@@ -14,13 +14,17 @@ function calculateDeliveryCost(
         throw new Error("Fragile packages cannot be delivered over distances greater than 30 km");
     }
 
+    if (distance <= 0) {
+        throw new Error("Distance must be greater than 0");
+    }
+
     if (distance > 30) {
         cost += 300;
     } else if (distance > 10) {
         cost += 200;
     } else if (distance > 2) {
         cost += 100;
-    } else {
+    } else if (distance > 0) {
         cost += 50;
     }
 
@@ -43,4 +47,4 @@ function calculateDeliveryCost(
 console.log(calculateDeliveryCost(5, 'small', false, 'normal'));
 console.log(calculateDeliveryCost(1, 'large', true, 'high'));
 console.log(calculateDeliveryCost(25, 'small', true, 'very high'));
-console.log(calculateDeliveryCost(60, 'small', true, 'high'));
+console.log(calculateDeliveryCost(0, 'small', true, 'high'));
