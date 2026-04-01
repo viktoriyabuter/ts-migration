@@ -20,64 +20,57 @@ const deliveryOptionsCost: Record<DeliveryOption, number> = {
   express: 200,
   weekend: 100,
 };
+const minCost = 400;
 
-function calculateDeliveryCost(
+const getDistanceCost = (distance: number): number => {
+  if (distance > 30) return 300;
+  if (distance > 10) return 200;
+  if (distance > 2) return 100;
+  if (distance > 0) return 50;
+  throw new Error("Distance must be greater than 0");
+};
+
+const getOptionsCost = (options: DeliveryOption[]): number =>
+  options.reduce((sum, o) => sum + deliveryOptionsCost[o], 0);
+
+const getSlotCost = (slot?: DeliverySlot): number => {
+  if (!slot) return 0;
+  const [start, end] = slot;
+
+  if (start >= 22 || end <= 8)
+    throw new Error("Delivery not allowed between 22:00 and 08:00");
+  if (start >= 18 && end <= 22) return 120;
+  return 0;
+};
+
+const calculateDeliveryCost = (
   distance: number,
   size: PackageSize,
   fragile: boolean,
   workload: Workload,
   options: DeliveryOption[] = [],
   slot?: DeliverySlot,
-): number {
-  const minCost = 400;
-  let cost = 0;
-
+): number => {
   if (fragile && distance > 30) {
     throw new Error(
       "Fragile packages cannot be delivered over distances greater than 30 km",
     );
   }
 
-  if (distance <= 0) {
-    throw new Error("Distance must be greater than 0");
-  }
-
-  if (distance > 30) {
-    cost += 300;
-  } else if (distance > 10) {
-    cost += 200;
-  } else if (distance > 2) {
-    cost += 100;
-  } else if (distance > 0) {
-    cost += 50;
-  }
-
+  let cost = 0;
+  cost += getDistanceCost(distance);
   cost += sizeCost[size];
-
   if (fragile) cost += 300;
-
   cost *= workloadCoefficients[workload];
-
-  cost += options.reduce((sum, option) => sum + deliveryOptionsCost[option], 0);
-
-  if (slot) {
-    const [start, end] = slot;
-
-    if (start >= 22 || end <= 8) {
-      throw new Error("Delivery not allowed between 22:00 and 08:00");
-    }
-
-    if (start >= 18 && end <= 22) {
-      cost += 120;
-    }
-  }
+  cost += getOptionsCost(options);
+  cost += getSlotCost(slot);
 
   return Math.max(cost, minCost);
-}
+};
 
 console.log(
   calculateDeliveryCost(5, "small", false, "normal", ["express", "insurance"]),
 );
-console.log(calculateDeliveryCost(2, "small", false, "normal", [], [23, 1]));
+//console.log(calculateDeliveryCost(2, "small", false, "normal", [], [23, 1]));
 console.log(calculateDeliveryCost(25, "small", true, "very high"));
 console.log(calculateDeliveryCost(0, "small", true, "high"));
