@@ -1,5 +1,6 @@
 type PackageSize = "small" | "large";
 type Workload = "very high" | "high" | "increased" | "normal";
+type DeliveryOption = "insurance" | "express" | "weekend";
 
 const sizeCost: Record<PackageSize, number> = {
   small: 100,
@@ -13,11 +14,18 @@ const workloadCoefficients: Record<Workload, number> = {
   normal: 1.0,
 };
 
+const deliveryOptionsCost: Record<DeliveryOption, number> = {
+  insurance: 150,
+  express: 200,
+  weekend: 100,
+};
+
 function calculateDeliveryCost(
   distance: number,
   size: PackageSize,
   fragile: boolean,
   workload: Workload,
+  options: DeliveryOption[] = [],
 ): number {
   const minCost = 400;
   let cost = 0;
@@ -48,10 +56,14 @@ function calculateDeliveryCost(
 
   cost *= workloadCoefficients[workload];
 
+  cost += options.reduce((sum, option) => sum + deliveryOptionsCost[option], 0);
+
   return Math.max(cost, minCost);
 }
 
-console.log(calculateDeliveryCost(5, "small", false, "normal"));
+console.log(
+  calculateDeliveryCost(5, "small", false, "normal", ["express", "insurance"]),
+);
 console.log(calculateDeliveryCost(1, "large", true, "high"));
 console.log(calculateDeliveryCost(25, "small", true, "very high"));
 console.log(calculateDeliveryCost(0, "small", true, "high"));
