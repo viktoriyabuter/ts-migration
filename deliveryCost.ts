@@ -43,34 +43,63 @@ const getSlotCost = (slot?: DeliverySlot): number => {
   return 0;
 };
 
-const calculateDeliveryCost = (
-  distance: number,
-  size: PackageSize,
-  fragile: boolean,
-  workload: Workload,
-  options: DeliveryOption[] = [],
-  slot?: DeliverySlot,
-): number => {
-  if (fragile && distance > 30) {
-    throw new Error(
-      "Fragile packages cannot be delivered over distances greater than 30 km",
-    );
-  }
+function createDeliveryCalculator() {
+  let processedCount = 0;
 
-  let cost = 0;
-  cost += getDistanceCost(distance);
-  cost += sizeCost[size];
-  if (fragile) cost += 300;
-  cost *= workloadCoefficients[workload];
-  cost += getOptionsCost(options);
-  cost += getSlotCost(slot);
+  const calculateDeliveryCost = (
+    distance: number,
+    size: PackageSize,
+    fragile: boolean,
+    workload: Workload,
+    options: DeliveryOption[] = [],
+    slot?: DeliverySlot,
+  ): number => {
+    processedCount++;
 
-  return Math.max(cost, minCost);
-};
+    if (fragile && distance > 30) {
+      throw new Error(
+        "Fragile packages cannot be delivered over distances greater than 30 km",
+      );
+    }
+
+    let cost = 0;
+    cost += getDistanceCost(distance);
+    cost += sizeCost[size];
+    if (fragile) cost += 300;
+    cost *= workloadCoefficients[workload];
+    cost += getOptionsCost(options);
+    cost += getSlotCost(slot);
+
+    return Math.max(cost, minCost);
+  };
+
+  const getProcessedCount = (): number => processedCount;
+
+  return { calculateDeliveryCost, getProcessedCount };
+}
+
+const delivery = createDeliveryCalculator();
 
 console.log(
-  calculateDeliveryCost(5, "small", false, "normal", ["express", "insurance"]),
+  delivery.calculateDeliveryCost(5, "small", false, "normal", [
+    "express",
+    "insurance",
+  ]),
 );
-//console.log(calculateDeliveryCost(2, "small", false, "normal", [], [23, 1]));
-console.log(calculateDeliveryCost(25, "small", true, "very high"));
-console.log(calculateDeliveryCost(0, "small", true, "high"));
+console.log(delivery.calculateDeliveryCost(25, "small", true, "very high"));
+
+try {
+  console.log(delivery.calculateDeliveryCost(0, "small", true, "high"));
+} catch (e) {
+  console.error(e instanceof Error ? e.message : e);
+}
+
+try {
+  console.log(
+    delivery.calculateDeliveryCost(2, "small", false, "normal", [], [23, 1]),
+  );
+} catch (e) {
+  console.error(e instanceof Error ? e.message : e);
+}
+
+console.log("Total deliveries processed:", delivery.getProcessedCount());
