@@ -28,7 +28,12 @@ function calculateDeliveryCost(
         cost += 50;
     }
 
-    cost += (size ==='large') ? 200 : 100
+    const sizeCost: Record<PackageSize, number> = {
+        small: 100,
+        large: 200,
+    };
+
+    cost += sizeCost[size];
 
     if (fragile) cost += 300;
 
