@@ -34,5 +34,9 @@ const order2 = new OrderDTO({
   id: 1,
   shipDate: "2026-04-02T15:30:00Z",
 });
+const order3 = new OrderDTO({
+  complete: true,
+});
 console.log(order1.id);
 console.log(order2.shipDate);
+console.log(order3.complete);
