@@ -1,6 +1,9 @@
 //Create an interface and the class for the Pet and Order DTO from Swagger
 //Petstore: https://petstore.swagger.io/#/
 
+type PetInput = Required<Pick<Pet, "name" | "photoUrls">> &
+  Partial<Omit<Pet, "name" | "photoUrls">>;
+
 enum PetStatus {
   Available = "AVAILABLE",
   Pending = "PENDING",
@@ -34,33 +37,22 @@ class PetDTO implements Pet {
   tags?: Tag[];
   status?: PetStatus;
 
-  constructor(
-    name: string,
-    photoUrls: string[],
-    id?: number,
-    category?: Category,
-    tags?: Tag[],
-    status?: PetStatus,
-  ) {
-    this.name = name;
-    this.photoUrls = photoUrls;
-
-    if (id !== undefined) this.id = id;
-    if (category !== undefined) this.category = category;
-    if (tags !== undefined) this.tags = tags;
-    if (status !== undefined) this.status = status;
+  constructor(data: PetInput) {
+    this.name = data.name;
+    this.photoUrls = data.photoUrls;
+    Object.assign(this, data);
   }
 }
 
-const dog = new PetDTO(
-  "Baikal",
-  ["url1"],
-  undefined,
-  undefined,
-  undefined,
-  PetStatus.Available,
-);
-const cat = new PetDTO("Martin", ["url2"]);
+const dog = new PetDTO({
+  name: "Baikal",
+  photoUrls: ["url1"],
+  status: PetStatus.Available,
+});
+const cat = new PetDTO({ name: "Martin", photoUrls: ["url2"] });
 
 console.log(`My first pet: ${cat.name}`);
 console.log(`My second pet: ${dog.name}`);
+
+console.log({ ...cat });
+console.log({ ...dog });
