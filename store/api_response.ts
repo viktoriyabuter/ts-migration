@@ -24,12 +24,12 @@ export class ApiResponse<T> {
     this.statusCode = statusCode;
   }
 
-  getStatusMessage(): number {
+  public getStatusMessage(): number {
     return this.statusCode;
   }
 
   public isSuccess(): boolean {
-    return this.statusCode === 200;
+    return this.statusCode >= 200 && this.statusCode < 300;
   }
 
   public printSummary(): string {
