@@ -2,6 +2,7 @@ import { PetDTO, PetStatus } from "./pet";
 import { ApiResponse } from "./api_response";
 import { OrderDTO } from "./order";
 import { UserDTO } from "./user";
+import { fetchFromServer } from "./fetch";
 
 const dog = new PetDTO({
   name: "Baikal",
@@ -23,3 +24,13 @@ const user = new UserDTO({
 
 const userResponse = new ApiResponse(user, 200);
 console.log("User:", userResponse.printSummary());
+
+async function main() {
+  const response = await fetchFromServer(dog, 200);
+  console.log(response.printSummary());
+
+  const errorResponse = await fetchFromServer(dog, 500);
+  console.log(errorResponse.printSummary());
+}
+
+main();
