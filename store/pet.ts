@@ -4,7 +4,7 @@
 type PetInput = Required<Pick<Pet, "name" | "photoUrls">> &
   Partial<Omit<Pet, "name" | "photoUrls">>;
 
-enum PetStatus {
+export enum PetStatus {
   Available = "AVAILABLE",
   Pending = "PENDING",
   Sold = "SOLD",
@@ -29,7 +29,7 @@ interface Pet {
   status?: PetStatus;
 }
 
-class PetDTO implements Pet {
+export class PetDTO implements Pet {
   id?: number;
   category?: Category;
   name: string;
@@ -43,16 +43,3 @@ class PetDTO implements Pet {
     Object.assign(this, data);
   }
 }
-
-const dog = new PetDTO({
-  name: "Baikal",
-  photoUrls: ["url1"],
-  status: PetStatus.Available,
-});
-const cat = new PetDTO({ name: "Martin", photoUrls: ["url2"] });
-
-console.log(`My first pet: ${cat.name}`);
-console.log(`My second pet: ${dog.name}`);
-
-console.log({ ...cat });
-console.log({ ...dog });
