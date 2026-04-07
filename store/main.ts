@@ -26,11 +26,12 @@ const userResponse = new ApiResponse(user, 200);
 console.log("User:", userResponse.printSummary());
 
 async function main() {
-  const response = await fetchFromServer(dog, 200);
-  console.log(response.printSummary());
-
-  const errorResponse = await fetchFromServer(dog, 500);
-  console.log(errorResponse.printSummary());
+  try {
+    const fetchedData = await fetchFromServer(order);
+    console.log(fetchedData);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 main();

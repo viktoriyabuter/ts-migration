@@ -11,24 +11,16 @@
 
 import { ApiResponse } from "./api_response";
 
-export async function fetchFromServer<T>(
-  data: T,
-  statusCode: number,
-): Promise<ApiResponse<T>> {
-  const promise = new Promise<ApiResponse<T>>((resolve, reject) => {
+export async function fetchFromServer<T>(data: T): Promise<ApiResponse<T>> {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (statusCode === 200) {
-        resolve(new ApiResponse(data, statusCode));
+      const seconds = new Date().getSeconds();
+
+      if (seconds % 2 === 0) {
+        resolve(new ApiResponse(data, 200));
       } else {
-        reject(new ApiResponse(data, statusCode));
+        reject(new Error(`Failed`));
       }
     }, 1000);
   });
-
-  try {
-    const result = await promise;
-    return result;
-  } catch (error) {
-    return error as ApiResponse<T>;
-  }
 }
