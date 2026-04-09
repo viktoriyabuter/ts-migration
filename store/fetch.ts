@@ -11,7 +11,7 @@
 
 import { ApiResponse } from "./api_response";
 
-export async function fetchFromServer<T>(data: T): Promise<ApiResponse<T>> {
+export function fetchFromServer<T>(data: T): Promise<ApiResponse<T>> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const seconds = new Date().getSeconds();
