@@ -9,17 +9,6 @@
 // The goal of this task is to practice async/await,
 // Promise behavior, generics, error handling, and working with typed data structures.
 
-// HW 6
-// Build a small asynchronous API client for the Swagger PetStore API using fetch.
-// — create a reusable ApiClient class with generic CRUD methods for working with REST endpoints.
-// — The ApiClient should support at least GET, POST, PUT, and DELETE operations and use generics
-// to provide typed request and response handling.
-// — Then create a PetStoreClient class that uses these base ApiClient methods instead of calling fetch directly.
-// — Implement full CRUD support for the Pet entity only: getPetById, createPet, updatePet, and deletePet.
-// — Use promises, async/await, handle HTTP errors explicitly.
-// The goal of this task is to practice asynchronous programming, fetch, generics, DTO modeling,
-// reusable client design, and basic API framework structure.
-
 import { ApiResponse } from "./api_response";
 
 export function fetchFromServer<T>(data: T): Promise<ApiResponse<T>> {
