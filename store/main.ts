@@ -14,16 +14,16 @@ async function main() {
         status: PetStatus.Available,
       }),
     );
-    console.log("CREAYE OK:", created);
-  } catch {
-    console.log("CREATE FAIL");
+    console.log("CREATE OK:", created);
+  } catch (e) {
+    console.log("CREATE FAIL:", (e as Error).message);
   }
 
   try {
-    const pet = await client.getPetById(petId);
+    const pet = await client.getPetById(5);
     console.log("GET OK:", pet);
-  } catch {
-    console.log("GET FAIL");
+  } catch (e) {
+    console.log("GET FAIL:", (e as Error).message);
   }
 
   try {
@@ -38,22 +38,22 @@ async function main() {
       }),
     );
     console.log("UPDATE OK:", updated);
-  } catch {
-    console.log("UPDATE FAIL");
+  } catch (e) {
+    console.log("UPDATE FAIL:", (e as Error).message);
   }
 
   try {
     await client.deletePet(petId);
     console.log("DELETE OK");
-  } catch {
-    console.log("DELETE FAIL");
+  } catch (e) {
+    console.log("DELETE FAIL:", (e as Error).message);
   }
 
   try {
-    const afterDelete = await client.getPetById(petId);
-    console.log("GET after DELETE OK:", afterDelete);
-  } catch {
-    console.log("GET after DELETE FAIL");
+    await client.getPetById(petId);
+    console.log("GET after DELETE OK");
+  } catch (e) {
+    console.log("GET after DELETE FAIL:", (e as Error).message);
   }
 }
 
