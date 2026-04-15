@@ -1,36 +1,59 @@
 import { PetDTO, PetStatus } from "./pet";
-import { ApiResponse } from "./api_response";
-import { OrderDTO } from "./order";
-import { UserDTO } from "./user";
-import { fetchFromServer } from "./fetch";
-
-const dog = new PetDTO({
-  name: "Baikal",
-  photoUrls: ["url1"],
-  status: PetStatus.Available,
-});
-const petResponse = new ApiResponse(dog, 200);
-console.log("Pet:", petResponse.printSummary());
-
-const order = new OrderDTO();
-const orderResponse = new ApiResponse(order, 404);
-console.log("Order:", orderResponse.printSummary());
-
-const user = new UserDTO({
-  firstName: "Viktoriya",
-  lastName: "Buter",
-  userStatus: 1,
-});
-
-const userResponse = new ApiResponse(user, 200);
-console.log("User:", userResponse.printSummary());
+import { PetStoreClient } from "./pet_store_client";
 
 async function main() {
+  const client = new PetStoreClient();
+  const petId = Date.now();
+
   try {
-    const fetchedData = await fetchFromServer(order);
-    console.log(fetchedData);
-  } catch (err) {
-    console.error(err);
+    const created = await client.createPet(
+      new PetDTO({
+        id: petId,
+        name: "Baikal",
+        photoUrls: ["url1"],
+        status: PetStatus.Available,
+      }),
+    );
+    console.log("CREATE OK:", created);
+  } catch (e) {
+    console.log("CREATE FAIL:", (e as Error).message);
+  }
+
+  try {
+    const pet = await client.getPetById(5);
+    console.log("GET OK:", pet);
+  } catch (e) {
+    console.log("GET FAIL:", (e as Error).message);
+  }
+
+  try {
+    const updated = await client.updatePet(
+      new PetDTO({
+        id: petId,
+        name: "UPDATED",
+        photoUrls: ["url"],
+        status: PetStatus.Available,
+        category: { id: 0, name: "test" },
+        tags: [{ id: 0, name: "tag" }],
+      }),
+    );
+    console.log("UPDATE OK:", updated);
+  } catch (e) {
+    console.log("UPDATE FAIL:", (e as Error).message);
+  }
+
+  try {
+    await client.deletePet(petId);
+    console.log("DELETE OK");
+  } catch (e) {
+    console.log("DELETE FAIL:", (e as Error).message);
+  }
+
+  try {
+    await client.getPetById(petId);
+    console.log("GET after DELETE OK");
+  } catch (e) {
+    console.log("GET after DELETE FAIL:", (e as Error).message);
   }
 }
 

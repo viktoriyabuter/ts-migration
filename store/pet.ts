@@ -10,17 +10,17 @@ export enum PetStatus {
   Sold = "SOLD",
 }
 
-interface Category {
+export interface Category {
   id?: number;
   name?: string;
 }
 
-interface Tag {
+export interface Tag {
   id?: number;
   name: string;
 }
 
-interface Pet {
+export interface Pet {
   id?: number;
   category?: Category;
   name: string;
